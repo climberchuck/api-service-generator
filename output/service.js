@@ -1,12 +1,12 @@
-function GetCompanies () {
-return [{"Id":1,"Name":"Levvel, LLC"}];
+export function GetCompanies() {
+    return $http["GET"]("/api/v1/company");
 }
-function GetCompanyById (companyId) {
-return {"Id":2,"Name":"Heels"};
+export function GetCompanyById(companyId) {
+    return $http["GET"]("/api/v1/company/" + companyId);
 }
-function GetCompanyContactById (companyId, contactId) {
-return {"Id":2,"Name":"Heels"};
+export function GetCompanyContactById(companyId, contactId) {
+    return $http["GET"]("/api/v1/company/" + companyId + "/contact/" + contactId);
 }
-function CreateCompany (data) {
-return {"Id":1,"Name":"Levvel, LLC"};
+export function CreateCompany(data) {
+    return $http["POST"]("/api/v1/company", data);
 }

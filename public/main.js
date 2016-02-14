@@ -10,7 +10,7 @@ var wstream = fs.createWriteStream(fileName);
 wstream.on('finish', () => {
     console.log(`Finished creating {fileName}`)
 })
-
+var isMock = false;
 _.forEach(apiData, (api) => {
     var result = api['response-body'];
     var methodName = api['method-name'];
@@ -18,7 +18,7 @@ _.forEach(apiData, (api) => {
     var urlTemplate = api['url-template'];
     var parameters = parseUrlParameters(urlTemplate);
 
-    wstream.write(`function ` + methodName + ` (`);
+    wstream.write(`export function ` + methodName + ` (`);
     console.log(methodName);
     console.log(parameters);
     _.forEach(parameters, (p, index) => {
@@ -37,9 +37,34 @@ _.forEach(apiData, (api) => {
     }
     wstream.write(`) {`);
     wstream.write(`\n`);
-    wstream.write('return ');
-    wstream.write(JSON.stringify(result));
-    wstream.write(';\n');
+    if (isMock) {
+        wstream.write('return ');
+        wstream.write(JSON.stringify(result));
+        wstream.write(';\n');
+    }
+    else {
+        var hasBodyData = (httpMethod === 'POST' || httpMethod === 'PUT');
+        var rs = '';
+        rs += 'return $http["';
+        rs += httpMethod;
+        rs += '"]("';
+
+        var url = urlTemplate;
+        _.forEach(parameters, (p, index) => {
+            var replacementText = '"+ ' + p;
+            if (index != (parameters.length - 1)) {
+                replacementText += ' +"';
+            }
+            url = url.replace('{' + p + '}', replacementText);
+        });
+        rs += url;
+        if (parameters.length == 0) { rs += '"'; }
+        if (hasBodyData) {
+            rs += ', data';
+        }
+        rs += ');\n';
+        wstream.write(rs);
+    }
     wstream.write('}\n');
 });
 
