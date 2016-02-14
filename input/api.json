@@ -1,0 +1,44 @@
+[
+    {
+        "url-template": "/api/v1/company",
+        "method": "GET",
+        "method-name": "GetCompanies",
+        "response-body": [
+            {
+                "Id": 1,
+                "Name": "Levvel, LLC"
+            }
+        ]
+    },
+    {
+        "url-template": "/api/v1/company/{companyId}",
+        "method": "GET",
+        "method-name": "GetCompanyById",
+        "response-body": {
+            "Id": 2,
+            "Name": "Heels"
+        }
+    },
+    {
+        "url-template": "/api/v1/company/{companyId}/contact/{contactId}",
+        "method": "GET",
+        "method-name": "GetCompanyContactById",
+        "response-body": {
+            "Id": 2,
+            "Name": "Heels"
+        }
+    },
+    {
+        "url-template": "/api/v1/company",
+        "method": "POST",
+        "method-name": "CreateCompany",
+        "request-body": {
+            "Id": 1,
+            "Name": "Levvel, LLC"
+        },
+        "response-body": {
+            "Id": 1,
+            "Name": "Levvel, LLC"
+        }
+    }
+]
