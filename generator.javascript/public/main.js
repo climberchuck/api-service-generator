@@ -1,17 +1,20 @@
 var _ = require('lodash');
 
-var apiData = require('./../input/api.json');
+
 var fs = require('fs');
 console.log("I'm running.");
 
-
+var apiData = require('C:\\temp\\services.json');
+String.prototype.firstToLower = function () {
+    return this.charAt(0).toLowerCase() + this.slice(1);
+};
 
 
 var isMock = false;
 var services = _.groupBy(apiData, "serviceName");
 var svcNames = Object.getOwnPropertyNames(services);
 _.forEach(Object.getOwnPropertyNames(services), (serviceName) => {
-    var fileName = 'output/' + serviceName + '.service.js';
+    var fileName = 'output/' + serviceName.firstToLower() + '.service.js';
     var wstream = fs.createWriteStream(fileName);
     writeToStream(services[serviceName], wstream);
 
@@ -19,12 +22,14 @@ _.forEach(Object.getOwnPropertyNames(services), (serviceName) => {
         console.log('Finished creating ' + fileName + '');
     })
 });
+
 function writeToStream(apiData, wstream) {
+    wstream.write("import $http from '$http';");
     _.forEach(apiData, (api) => {
-        var result = api['response-body'];
-        var methodName = api['method-name'];
-        var httpMethod = api['method'];
-        var urlTemplate = api['url-template'];
+
+        var methodName = api['methodName'].firstToLower();
+        var httpMethod = api['httpMethod'];
+        var urlTemplate = api['urlTemplate'];
         var parameters = parseUrlParameters(urlTemplate);
 
         wstream.write(`export function ` + methodName + ` (`);
@@ -45,6 +50,7 @@ function writeToStream(apiData, wstream) {
         wstream.write(`) {`);
         wstream.write(`\n`);
         if (isMock) {
+            var result = api['response-body'];
             wstream.write('return ');
             wstream.write(JSON.stringify(result));
             wstream.write(';\n');
